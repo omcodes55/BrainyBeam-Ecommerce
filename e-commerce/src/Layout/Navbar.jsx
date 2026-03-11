@@ -1,18 +1,26 @@
 import React from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const handleLogin = () => {
+    navigate("/login");
+  };
 
-  const handleLogin = ()=>{
-    navigate('/login')
-  }
+  const handleRegister = () => {
+    navigate("/register");
+  };
 
-  const handleRegister = ()=>{
-    navigate('/register')
-  }
+  const LogOut = () => {
+    localStorage.clear();
+    toast("User Logged out");
+    navigate("/login");
+  };
 
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
   return (
     <div className="container">
@@ -33,32 +41,65 @@ const Navbar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link className="nav-link" to="/">
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/product">
-                Product
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/about">
-                About
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/contact">
-                Contact
-              </Link>
-            </li>
+            {role === "admin" && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/">
+                    Home
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/manage-product">
+                    Manage Product
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {role === "user" && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/">
+                    Home
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/product">
+                    Product
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/about">
+                    About
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/contact">
+                    Contact
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
 
         <div className="d-flex gap-3">
-          <div className="btn btn-success" onClick={handleLogin}>Login</div>
-          <div className="btn btn-outline-primary" onClick={handleRegister}>Register</div>
+          {token ? (
+            <>
+              <div className="btn btn-danger" onClick={LogOut}>
+                Logout
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="btn btn-success" onClick={handleLogin}>
+                Login
+              </div>
+              <div className="btn btn-outline-primary" onClick={handleRegister}>
+                Register
+              </div>
+            </>
+          )}
         </div>
       </nav>
     </div>

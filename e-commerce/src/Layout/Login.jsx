@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -13,11 +16,21 @@ const Login = () => {
     try {
       const { data } = await axios.post("http://localhost:3000/login", {
         email,
-        password,
+        password 
       });
+      
+      console.log(data)
       toast(data.message);
+
+      localStorage.setItem("token",data.token)
+      localStorage.setItem("userEmail", data.user.email)
+      localStorage.setItem("userId", data.user._id)
+      localStorage.setItem("role",data.user.role)
+
       setEmail("");
       setPassword("");
+      navigate('/')
+
     } catch (error) {
       toast(error?.response?.data?.message);
     }
@@ -75,7 +88,7 @@ const Login = () => {
                 Check me out
               </label>
             </div>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary" >
               Login
             </button>
           </form>

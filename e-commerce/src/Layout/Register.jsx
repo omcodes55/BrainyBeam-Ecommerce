@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [email, setEmail] = useState();
   const [number, setPhone] = useState();
   const [password, setPassword] = useState();
+  const navigate = useNavigate();
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -23,10 +26,15 @@ const Register = () => {
       setPassword("");
       setPhone("");
 
+      navigate('/login')
+    
+
     } catch (error) {
-      toast(error.response.data.message);
+      toast(error.response.data.message)
+
+    
     }
-  };
+  }; 
   return (
     <>
       <Toaster />
