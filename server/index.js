@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 const cors = require("cors");
 const mongoose = require("mongoose");
-const User = require("./model/user.js");
+const User = require("./models/user.js");
 const bcrypt = require("bcrypt")
 const dotenv = require("dotenv")
 const jwt = require("jsonwebtoken")
@@ -123,6 +123,9 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+
+app.use("/product", require('./routes/productRoute'))
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
