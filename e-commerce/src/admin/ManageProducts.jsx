@@ -3,10 +3,10 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
 const ManageProducts = () => {
-  const [productName, setProductName] = useState();
-  const [productImage, setProductImage] = useState();
-  const [productDescription, setProductDescription] = useState();
-  const [productPrice, setProductPrice] = useState();
+  const [productName, setProductName] = useState("");
+  const [productImage, setProductImage] = useState(null);
+  const [productDescription, setProductDescription] = useState("");
+  const [productPrice, setProductPrice] = useState("");
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -15,13 +15,17 @@ const ManageProducts = () => {
     console.log("Product Description ---> ", productDescription);
     console.log("Product Price ---> ", productPrice);
 
+    let formData = new FormData();
+    formData.append("productName", productName);
+    formData.append("productImage", productImage);
+    formData.append("productDescription", productDescription);
+    formData.append("productPrice", productPrice);
+
     try {
-      const { data } = await axios.post("http://localhost:3000/product/add", {
-        productName,
-        productImage,
-        productDescription,
-        productPrice
-      });
+      const { data } = await axios.post(
+        "http://localhost:3000/product/add",
+        formData,
+      );
       console.log(data);
       toast(data.message);
 
@@ -29,9 +33,6 @@ const ManageProducts = () => {
       setProductImage("");
       setProductDescription("");
       setProductPrice("");
-
-
-
     } catch (err) {
       console.log(err);
       toast(err.response?.data?.message);
@@ -67,10 +68,9 @@ const ManageProducts = () => {
               </label>
               <input
                 type="file"
-                value={productImage}
                 className="form-control"
                 id="exampleFormControlInput2"
-                onChange={(e) => setProductImage(e.target.value)}
+                onChange={(e) => setProductImage(e.target.files[0])}
               />
             </div>
 

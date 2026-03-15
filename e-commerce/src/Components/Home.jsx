@@ -1,16 +1,10 @@
-import React from "react";
-import Product from "./Product";
-import { data, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
 
 const Home = () => {
   const navigate = useNavigate();
-
-
-  const [hello,setHello] = useState()
-
+  const [hello, setHello] = useState("");
 
   const navigateProduct = () => {
     navigate("/product");
@@ -20,53 +14,68 @@ const Home = () => {
     try {
       const { data } = await axios.get("http://localhost:3000");
       console.log(data);
-      setHello(data)
+      setHello(data);
     } catch (err) {
       console.log(err);
     }
   };
-
-  
 
   useEffect(() => {
     fetchHello();
   }, []);
 
   return (
-    <>
-      <div className="container">
-        <div className="row align-items-center">
-          <div className="col-6">
-            <h1>{hello}</h1>
-            <p>
-              Shop the latest trends and timeless essentials all in one place.
-              Our curated collection offers premium quality, affordable prices,
-              and styles for every season. Discover fashion that fits your
-              lifestyle and enjoy a seamless online shopping experience with
-              fast delivery and secure checkout.
-            </p>
-            <div className="d-flex  gap-3">
-              <button className="btn btn-primary" onClick={navigateProduct}>
-                Shop Now
-              </button>
-              <button
-                className="btn btn-outline-success"
-                onClick={navigateProduct}
-              >
-                View Collection
-              </button>
-            </div>
+    <div className="container mt-5">
+      <div className="row align-items-center">
+
+        {/* LEFT SIDE */}
+        <div className="col-lg-6 col-md-12 mb-4">
+
+          <h1 className="display-5 fw-bold text-dark">
+            {hello}
+          </h1>
+
+          <p className="text-muted mt-3">
+            Shop the latest trends and timeless essentials all in one place.
+            Our curated collection offers premium quality products at affordable
+            prices. Discover fashion that fits your lifestyle with fast delivery
+            and secure checkout.
+          </p>
+
+          <div className="d-flex gap-3 mt-4">
+
+            <button
+              className="btn btn-dark btn-lg"
+              onClick={navigateProduct}
+            >
+              Shop Now
+            </button>
+
+            <button
+              className="btn btn-outline-dark btn-lg"
+              onClick={navigateProduct}
+            >
+              View Collection
+            </button>
+
           </div>
-          <div className="col-6">
-            <img
-              className="img-fluid"
-              src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-f-9.webp"
-              alt=""
-            />
-          </div>
+
         </div>
+
+        {/* RIGHT SIDE IMAGE */}
+        <div className="col-lg-6 col-md-12 text-center">
+
+          <img
+            className="img-fluid rounded shadow"
+            src="https://img.freepik.com/free-photo/young-woman-with-smartphone-shopping-bags_23-2148316462.jpg?semt=ais_hybrid&w=740&q=80"
+            alt="Ecommerce"
+            style={{ maxHeight: "450px", objectFit: "contain" }}
+          />
+
+        </div>
+
       </div>
-    </>
+    </div>
   );
 };
 

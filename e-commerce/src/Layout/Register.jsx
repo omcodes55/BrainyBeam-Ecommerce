@@ -1,104 +1,123 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
-  const [email, setEmail] = useState();
-  const [number, setPhone] = useState();
-  const [password, setPassword] = useState();
-  const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+  const [number, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log("Email: ", email);
-    console.log("Phone Number: ", number);
-    console.log("Password: ", password);
+
     try {
+
       const { data } = await axios.post("http://localhost:3000/register", {
         email,
         password,
         number,
       });
-      toast(data.message);
+
+      toast.success(data.message);
+
       setEmail("");
       setPassword("");
       setPhone("");
 
-      navigate('/login')
-    
+      navigate("/login");
 
     } catch (error) {
-      toast(error.response.data.message)
 
-    
+      toast.error(error.response?.data?.message || "Registration Failed");
+
     }
-  }; 
+  };
+
   return (
     <>
       <Toaster />
-      <div className="container">
-        <div className="row justify-content-center" style={{ padding: "50px" }}>
-          <form
-            className="col-4"
-            style={{
-              padding: "50px",
-              border: "2px solid",
-              borderRadius: "20px",
-            }}
-            onSubmit={handleRegister}
-          >
-            <h1 className="text-center">Register</h1>
-            <div className="mb-3">
-              <label for="exampleInputEmail" className="form-label">
-                Email address
-              </label>
-              <input
-                type="email"
-                className="form-control"
-                value={email}
-                id="exampleInputEmail"
-                aria-describedby="emailHelp"
-                placeholder="Enter your valid email"
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label for="exampleInputPhonenumber" className="form-label">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                className="form-control"
-                value={number}
-                id="exampleInputPhonenumber"
-                aria-describedby="PhoneHelp"
-                placeholder="Enter your mobile number"
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label for="exampleInputPassword" className="form-label">
-                Password
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                value={password}
-                id="exampleInputPassword"
-                placeholder="Enter Your Password"
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+
+      <div className="container mt-5">
+        <div className="row justify-content-center">
+
+          <div className="col-lg-4 col-md-6">
+
+            <div className="card shadow border-0 p-4">
+
+              <h2 className="text-center fw-bold mb-4">
+                Register
+              </h2>
+
+              <form onSubmit={handleRegister}>
+
+                <div className="mb-3">
+                  <label className="form-label">
+                    Email address
+                  </label>
+
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    placeholder="Enter your email"
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">
+                    Phone Number
+                  </label>
+
+                  <input
+                    type="tel"
+                    className="form-control"
+                    value={number}
+                    placeholder="Enter your mobile number"
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">
+                    Password
+                  </label>
+
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={password}
+                    placeholder="Enter your password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="d-grid">
+                  <button className="btn btn-dark">
+                    Register
+                  </button>
+                </div>
+
+              </form>
+
+              <p className="text-center mt-3">
+                Already have an account?{" "}
+                <Link to="/login">
+                  Login
+                </Link>
+              </p>
+
             </div>
 
-            <button type="submit" className="btn btn-primary">
-              Register
-            </button>
-          </form>
+          </div>
+
         </div>
       </div>
     </>
