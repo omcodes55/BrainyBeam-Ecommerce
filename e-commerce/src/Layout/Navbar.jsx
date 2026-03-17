@@ -18,12 +18,14 @@ const Navbar = () => {
   const role = localStorage.getItem("role");
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
       <div className="container">
+        {/* LOGO */}
         <Link className="navbar-brand fw-bold fs-4" to="/">
           🛒 E-Store
         </Link>
 
+        {/* TOGGLE */}
         <button
           className="navbar-toggler"
           type="button"
@@ -34,50 +36,69 @@ const Navbar = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto">
-
+          {/* LEFT MENU */}
+          <ul className="navbar-nav mx-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/">Home</Link>
+              <Link className="nav-link px-3" to="/">
+                Home
+              </Link>
             </li>
 
             {role === "user" && (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/product">Products</Link>
+                  <Link className="nav-link px-3" to="/product">
+                    Products
+                  </Link>
                 </li>
 
                 <li className="nav-item">
-                  <Link className="nav-link" to="/about">About</Link>
+                  <Link className="nav-link px-3" to="/about">
+                    About
+                  </Link>
                 </li>
 
                 <li className="nav-item">
-                  <Link className="nav-link" to="/contact">Contact</Link>
+                  <Link className="nav-link px-3" to="/contact">
+                    Contact
+                  </Link>
                 </li>
               </>
             )}
 
             {role === "admin" && (
               <li className="nav-item">
-                <Link className="nav-link" to="/manage-product">
+                <Link className="nav-link px-3" to="/manage-product">
                   Manage Product
                 </Link>
               </li>
             )}
-
           </ul>
 
-          <div className="d-flex gap-2">
+          {/* RIGHT SIDE */}
+          <div className="d-flex align-items-center gap-3">
+            {/* SEARCH BAR */}
+           
+
+            {/* AUTH BUTTONS */}
             {token ? (
-              <button className="btn btn-danger" onClick={LogOut}>
+              <button
+                className="btn btn-outline-danger rounded-pill px-3"
+                onClick={LogOut}
+              >
                 Logout
               </button>
             ) : (
               <>
-                <button className="btn btn-success" onClick={handleLogin}>
+                <button
+                  className="btn btn-success rounded-pill px-3"
+                  onClick={handleLogin}
+                >
                   Login
                 </button>
+
                 <button
-                  className="btn btn-outline-light"
+                  className="btn btn-outline-light rounded-pill px-3"
                   onClick={handleRegister}
                 >
                   Register

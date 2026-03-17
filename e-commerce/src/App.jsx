@@ -8,12 +8,14 @@ import Contact from "./Components/Contact";
 import Login from "./Layout/Login";
 import Register from "./Layout/Register";
 import ManageProducts from "./admin/ManageProducts";
+import Footer from "./Layout/Footer";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Navbar />
-      <Routes>
+      <div className="main-content">
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/manage-product" element={<ManageProducts />} />
         <Route path="/product" element={<Product />} />
@@ -22,6 +24,8 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
+      </div>
+      <Footer/>
     </BrowserRouter>
   );
 };

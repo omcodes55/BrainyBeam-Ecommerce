@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -7,105 +7,252 @@ const ManageProducts = () => {
   const [productImage, setProductImage] = useState(null);
   const [productDescription, setProductDescription] = useState("");
   const [productPrice, setProductPrice] = useState("");
+  const [preview, setPreview] = useState(null);
+  const [productList, setProductList] = useState([]);
+  const [editId, setEditId] = useState(null);
 
+  // ✅ Fetch Products
+  const fetchProduct = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:3000/product/list");
+      setProductList(data.productList);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProduct();
+  }, []);
+
+  // ✅ Add / Update Product
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    console.log("Product Name ---> ", productName);
-    console.log("Product Image ---> ", productImage);
-    console.log("Product Description ---> ", productDescription);
-    console.log("Product Price ---> ", productPrice);
 
     let formData = new FormData();
     formData.append("productName", productName);
-    formData.append("productImage", productImage);
     formData.append("productDescription", productDescription);
     formData.append("productPrice", productPrice);
 
-    try {
-      const { data } = await axios.post(
-        "http://localhost:3000/product/add",
-        formData,
-      );
-      console.log(data);
-      toast(data.message);
+    // ✅ Only send image if exists
+    if (productImage) {
+      formData.append("productImage", productImage);
+    }
 
+    try {
+      let res;
+
+      if (editId) {
+        res = await axios.put(
+          `http://localhost:3000/product/edit/${editId}`,
+          formData,
+        );
+      } else {
+        res = await axios.post("http://localhost:3000/product/add", formData);
+      }
+
+      toast(res.data.message);
+
+      // ✅ Reset form
       setProductName("");
-      setProductImage("");
+      setProductImage(null);
       setProductDescription("");
       setProductPrice("");
+      setEditId(null);
+      setPreview(null);
+
+      fetchProduct();
     } catch (err) {
       console.log(err);
-      toast(err.response?.data?.message);
+      toast(err.response?.data?.message || "Error occurred");
     }
+  };
+
+  // ✅ Delete
+  const handleDelete = async (id) => {
+    try {
+      const { data } = await axios.delete(
+        `http://localhost:3000/product/delete/${id}`,
+      );
+
+      toast(data.message);
+      fetchProduct();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ✅ Edit
+  const handleEdit = (item) => {
+    setEditId(item._id);
+    setProductName(item.productName);
+    setProductDescription(item.productDescription);
+    setProductPrice(item.productPrice);
+
+    setPreview(item.productImage);
+    setProductImage(null); // important
   };
 
   return (
     <>
       <Toaster />
 
-      <div className="container">
+      <div className="container mt-5">
+        {/* ===== FORM ===== */}
         <div className="row justify-content-center">
-          <h1 className="text-center"> Manage Product</h1>
+          <div className="col-lg-5">
+            <div className="card border-0 shadow-lg rounded-4 p-4">
+              <h3 className="text-center fw-bold mb-4">
+                {editId ? "Update Product" : "Add Product"}
+              </h3>
 
-          <form onSubmit={handleAddProduct} className="col-6">
-            <div className="mb-3">
-              <label htmlFor="exampleFormControlInput1" className="form-label">
-                Product Name
-              </label>
-              <input
-                type="text"
-                value={productName}
-                className="form-control"
-                id="exampleFormControlInput1"
-                placeholder="Product Name"
-                onChange={(e) => setProductName(e.target.value)}
-              />
+              <form onSubmit={handleAddProduct}>
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Product Name</label>
+                  <input
+                    type="text"
+                    value={productName}
+                    className="form-control form-control-lg rounded-3"
+                    placeholder="Enter product name"
+                    onChange={(e) => setProductName(e.target.value)}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">
+                    Product Image
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={(e) => {
+                      setProductImage(e.target.files[0]);
+                      setPreview(URL.createObjectURL(e.target.files[0]));
+                    }}
+                  />
+
+                  {preview && (
+                    <div className="text-center mt-3">
+                      <img
+                        src={
+                          preview.startsWith("blob:")
+                            ? preview
+                            : `http://localhost:3000/uploads/${preview}`
+                        }
+                        alt="Preview"
+                        className="rounded-3 shadow"
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Description</label>
+                  <textarea
+                    value={productDescription}
+                    className="form-control rounded-3"
+                    rows="3"
+                    placeholder="Enter description"
+                    onChange={(e) => setProductDescription(e.target.value)}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label fw-semibold">Price</label>
+                  <input
+                    type="number"
+                    value={productPrice}
+                    className="form-control rounded-3"
+                    placeholder="Enter price"
+                    onChange={(e) => setProductPrice(e.target.value)}
+                  />
+                </div>
+
+                <div className="d-grid">
+                  <button className="btn btn-dark btn-lg rounded-3">
+                    {editId ? "Update Product" : "Add Product"}
+                  </button>
+                </div>
+              </form>
             </div>
+          </div>
+        </div>
 
-            <div className="mb-3">
-              <label htmlFor="exampleFormControlInput2" className="form-label">
-                Add Product Image
-              </label>
-              <input
-                type="file"
-                className="form-control"
-                id="exampleFormControlInput2"
-                onChange={(e) => setProductImage(e.target.files[0])}
-              />
-            </div>
+        {/* ===== TABLE ===== */}
+        <div className="mt-5">
+          <h4 className="text-center fw-bold mb-4">📦 Product List</h4>
 
-            <div className="mb-3">
-              <label htmlFor="exampleFormControlInput3" className="form-label">
-                Product Description
-              </label>
-              <input
-                type="text"
-                value={productDescription}
-                className="form-control"
-                id="exampleFormControlInput3"
-                placeholder="Product Description"
-                onChange={(e) => setProductDescription(e.target.value)}
-              />
-            </div>
+          <div className="table-responsive">
+            <table className="table table-hover align-middle shadow rounded-4 overflow-hidden">
+              <thead className="table-dark">
+                <tr>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Price</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
 
-            <div className="mb-3">
-              <label htmlFor="exampleFormControlInput4" className="form-label">
-                Product Price
-              </label>
-              <input
-                type="number"
-                value={productPrice}
-                className="form-control"
-                id="exampleFormControlInput4"
-                placeholder="Product Price"
-                onChange={(e) => setProductPrice(e.target.value)}
-              />
-            </div>
+              <tbody>
+                {productList.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4">
+                      🚫 No Products Found
+                    </td>
+                  </tr>
+                ) : (
+                  productList.map((item) => (
+                    <tr key={item._id}>
+                      <td>
+                        <img
+                          src={`http://localhost:3000/uploads/${item.productImage}`}
+                          alt="Product"
+                          className="rounded-3"
+                          style={{
+                            width: "70px",
+                            height: "70px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </td>
 
-            <button type="submit" className="btn btn-outline-primary">
-              Add Product
-            </button>
-          </form>
+                      <td className="fw-semibold">{item.productName}</td>
+
+                      <td className="text-muted">
+                        {item.productDescription.slice(0, 35)}...
+                      </td>
+
+                      <td className="text-success fw-bold">
+                        ₹ {item.productPrice}
+                      </td>
+
+                      <td>
+                        <button
+                          className="btn btn-outline-success btn-sm me-3"
+                          onClick={() => handleEdit(item)}
+                        >
+                          ✏ Edit
+                        </button>
+
+                        <button
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={() => handleDelete(item._id)}
+                        >
+                          🗑 Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>

@@ -50,7 +50,7 @@ router.get('/list', async (req, res) => {
     try {
 
         const productList = await Product.find()
-       
+
 
         res.status(200).json({
             productList: productList
@@ -63,6 +63,69 @@ router.get('/list', async (req, res) => {
         });
     }
 });
+
+router.delete('/delete/:id', async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        await Product.findByIdAndDelete(id);
+
+        res.status(200).json({
+            message: "Product is Deleted!"
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+            message: "Server Error"
+        });
+    }
+});
+
+router.put('/edit/:editId', upload.single('productImage'), async (req, res) => {
+    try {
+        const { productName, productDescription, productPrice } = req.body;
+        const { editId } = req.params;
+
+        console.log(req.body);
+        console.log(req.file);
+
+        const product = await Product.findById(editId);
+
+        if (!product) {
+            return res.status(404).json({
+                message: "❌ Product not found"
+            });
+        }
+
+        // ✅ Create update object
+        let updatedData = {
+            productName,
+            productDescription,
+            productPrice
+        };
+
+        // ✅ Only update image if new image is uploaded
+        if (req.file) {
+            updatedData.productImage = req.file.filename;
+        }
+
+        await Product.findByIdAndUpdate(editId, updatedData);
+
+        res.status(200).json({
+            message: "✅ Product Updated Successfully!"
+        });
+
+    } catch (err) {
+        console.log(err);   
+
+        res.status(500).json({
+            message: "Server Error"
+        });
+    }
+});
+
 
 
 module.exports = router
