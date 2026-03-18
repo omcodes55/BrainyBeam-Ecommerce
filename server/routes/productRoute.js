@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const Product = require("../models/product");
-const multer = require("multer")
+const multer = require("multer");
+const { verifyToken } = require('../middleware/authMiddleware');
 
 
 const storage = multer.diskStorage({
@@ -17,7 +18,7 @@ const upload = multer({ storage: storage })
 
 
 
-router.post('/add', upload.single('productImage'), async (req, res) => {
+router.post('/add',verifyToken, upload.single('productImage'), async (req, res) => {
     try {
 
         const { productName, productDescription, productPrice } = req.body;

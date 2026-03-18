@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '../utils/axiosInstance'
 import toast, { Toaster } from "react-hot-toast";
 
 const ManageProducts = () => {
@@ -44,11 +44,11 @@ const ManageProducts = () => {
 
       if (editId) {
         res = await axios.put(
-          `http://localhost:3000/product/edit/${editId}`,
+          `/product/edit/${editId}`,
           formData,
         );
       } else {
-        res = await axios.post("http://localhost:3000/product/add", formData);
+        res = await axios.post("/product/add", formData);
       }
 
       toast(res.data.message);
