@@ -3,6 +3,7 @@ const router = express.Router()
 const Product = require("../models/product");
 const multer = require("multer");
 const { verifyToken } = require('../middleware/authMiddleware');
+const { isAdmin } = require('../middleware/roleMiddleware');
 
 
 const storage = multer.diskStorage({
@@ -18,7 +19,7 @@ const upload = multer({ storage: storage })
 
 
 
-router.post('/add',verifyToken, upload.single('productImage'), async (req, res) => {
+router.post('/add',verifyToken,isAdmin, upload.single('productImage'), async (req, res) => {
     try {
 
         const { productName, productDescription, productPrice } = req.body;
@@ -65,7 +66,7 @@ router.get('/list', async (req, res) => {
     }
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete/:id',verifyToken,isAdmin, async (req, res) => {
     try {
 
         const { id } = req.params;
@@ -84,7 +85,7 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
-router.put('/edit/:editId', upload.single('productImage'), async (req, res) => {
+router.put('/edit/:editId',verifyToken,isAdmin, upload.single('productImage'), async (req, res) => {
     try {
         const { productName, productDescription, productPrice } = req.body;
         const { editId } = req.params;
