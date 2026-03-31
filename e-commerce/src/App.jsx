@@ -11,6 +11,7 @@ import ManageProducts from "./admin/ManageProducts";
 import Footer from "./Layout/Footer";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import AdminRoute from "./Routes/AdminRoute";
+import AddtoCart from "./Components/AddtoCart";
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/product" element={<Product />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/add-to-cart" element={<AddtoCart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>

@@ -19,7 +19,7 @@ const upload = multer({ storage: storage })
 
 
 
-router.post('/add',verifyToken,isAdmin, upload.single('productImage'), async (req, res) => {
+router.post('/add', verifyToken, isAdmin, upload.single('productImage'), async (req, res) => {
     try {
 
         const { productName, productDescription, productPrice } = req.body;
@@ -27,21 +27,26 @@ router.post('/add',verifyToken,isAdmin, upload.single('productImage'), async (re
         console.log(req.body);
         console.log(req.file);
 
+        // ❗ Check image required
+        if (!req.file) {
+            return res.status(400).json({
+                message: "❌ Product image is required"
+            });
+        }
+
         await Product.create({
-            productName: productName,
-            productDescription: productDescription,
-            productPrice: productPrice,
+            productName,
+            productDescription,
+            productPrice,
             productImage: req.file.filename
         });
 
         res.status(200).json({
-            message: "✅ Product Added Successfully!"
+            message: "Product Added Successfully!"
         });
 
     } catch (err) {
-
-        console.log(err);
-
+        console.log("ERROR:", err);
         res.status(500).json({
             message: "Server Error"
         });
@@ -116,7 +121,7 @@ router.put('/edit/:editId',verifyToken,isAdmin, upload.single('productImage'), a
         await Product.findByIdAndUpdate(editId, updatedData);
 
         res.status(200).json({
-            message: "✅ Product Updated Successfully!"
+            message: "Product Updated Successfully!"
         });
 
     } catch (err) {

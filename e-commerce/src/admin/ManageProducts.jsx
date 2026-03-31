@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from '../utils/axiosInstance'
+import axios from "../utils/axiosInstance";
 import toast, { Toaster } from "react-hot-toast";
 
 const ManageProducts = () => {
@@ -14,7 +14,7 @@ const ManageProducts = () => {
   // ✅ Fetch Products
   const fetchProduct = async () => {
     try {
-      const { data } = await axios.get("http://localhost:3000/product/list");
+      const { data } = await axios.get("/product/list");
       setProductList(data.productList);
     } catch (err) {
       console.log(err);
@@ -29,12 +29,11 @@ const ManageProducts = () => {
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append("productName", productName);
     formData.append("productDescription", productDescription);
     formData.append("productPrice", productPrice);
 
-    // ✅ Only send image if exists
     if (productImage) {
       formData.append("productImage", productImage);
     }
@@ -43,17 +42,14 @@ const ManageProducts = () => {
       let res;
 
       if (editId) {
-        res = await axios.put(
-          `/product/edit/${editId}`,
-          formData,
-        );
+        res = await axios.put(`/product/edit/${editId}`, formData);
       } else {
         res = await axios.post("/product/add", formData);
       }
 
-      toast(res.data.message);
+      toast.success(res.data.message);
 
-      // ✅ Reset form
+      // reset
       setProductName("");
       setProductImage(null);
       setProductDescription("");
@@ -64,16 +60,14 @@ const ManageProducts = () => {
       fetchProduct();
     } catch (err) {
       console.log(err);
-      toast(err.response?.data?.message || "Error occurred");
+      toast.error(err.response?.data?.message || "Server Error");
     }
   };
 
   // ✅ Delete
   const handleDelete = async (id) => {
     try {
-      const { data } = await axios.delete(
-        `http://localhost:3000/product/delete/${id}`,
-      );
+      const { data } = await axios.delete(`/product/delete/${id}`);
 
       toast(data.message);
       fetchProduct();

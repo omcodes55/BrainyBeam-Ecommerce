@@ -1,6 +1,7 @@
 import React from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
       <div className="container">
+
         {/* LOGO */}
         <Link className="navbar-brand fw-bold fs-4" to="/">
           🛒 E-Store
@@ -36,8 +38,10 @@ const Navbar = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
+
           {/* LEFT MENU */}
           <ul className="navbar-nav mx-auto">
+
             <li className="nav-item">
               <Link className="nav-link px-3" to="/">
                 Home
@@ -73,12 +77,18 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
+
           </ul>
 
           {/* RIGHT SIDE */}
           <div className="d-flex align-items-center gap-3">
-            {/* SEARCH BAR */}
-           
+
+            {/* 🛒 CART ICON (NO COUNT) */}
+            {token && role === "user" && (
+              <Link to="/add-to-cart" className="text-white">
+                <FaShoppingCart size={22} />
+              </Link>
+            )}
 
             {/* AUTH BUTTONS */}
             {token ? (
@@ -106,6 +116,7 @@ const Navbar = () => {
               </>
             )}
           </div>
+
         </div>
       </div>
     </nav>

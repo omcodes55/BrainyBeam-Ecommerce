@@ -129,6 +129,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.use("/product", require('./routes/productRoute'))
+app.use("/cart", require('./routes/cartRoute'))
 
 
 app.listen(port, () => {
