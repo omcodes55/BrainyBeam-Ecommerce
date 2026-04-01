@@ -12,6 +12,7 @@ import Footer from "./Layout/Footer";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import AdminRoute from "./Routes/AdminRoute";
 import AddtoCart from "./Components/AddtoCart";
+import HomeAdmin from "./admin/HomeAdmin";
 
 const App = () => {
   return (
@@ -32,6 +33,16 @@ const App = () => {
             }
           />
 
+          <Route
+            path="/admin-home"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <HomeAdmin />
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
           <Route path="/product" element={<Product />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

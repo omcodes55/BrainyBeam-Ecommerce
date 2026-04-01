@@ -17,7 +17,7 @@ const Footer = () => {
 
           {/* RIGHT SOCIAL LOGOS */}
           <div className="col-md-4 d-flex justify-content-md-end justify-content-center gap-3 mt-2 mt-md-0">
-            <a href="https://www.linkedin.com" target="_blank">
+            <a href="https://www.linkedin.com/in/om-vadher-508a09246/" target="_blank">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/174/174857.png"
                 alt="LinkedIn"

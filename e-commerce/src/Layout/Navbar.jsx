@@ -21,7 +21,6 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
       <div className="container">
-
         {/* LOGO */}
         <Link className="navbar-brand fw-bold fs-4" to="/">
           🛒 E-Store
@@ -38,18 +37,15 @@ const Navbar = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
-
           {/* LEFT MENU */}
           <ul className="navbar-nav mx-auto">
-
-            <li className="nav-item">
-              <Link className="nav-link px-3" to="/">
-                Home
-              </Link>
-            </li>
-
             {role === "user" && (
               <>
+                <li className="nav-item">
+                  <Link className="nav-link px-3" to="/">
+                    Home
+                  </Link>
+                </li>
                 <li className="nav-item">
                   <Link className="nav-link px-3" to="/product">
                     Products
@@ -71,18 +67,28 @@ const Navbar = () => {
             )}
 
             {role === "admin" && (
-              <li className="nav-item">
-                <Link className="nav-link px-3" to="/manage-product">
-                  Manage Product
-                </Link>
-              </li>
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link px-3" to="/admin-home">
+                    Home
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link px-3" to="/manage-product">
+                    Manage Product
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link px-3" to="/contact">
+                    Contact
+                  </Link>
+                </li>
+              </>
             )}
-
           </ul>
 
           {/* RIGHT SIDE */}
           <div className="d-flex align-items-center gap-3">
-
             {/* 🛒 CART ICON (NO COUNT) */}
             {token && role === "user" && (
               <Link to="/add-to-cart" className="text-white">
@@ -116,7 +122,6 @@ const Navbar = () => {
               </>
             )}
           </div>
-
         </div>
       </div>
     </nav>
