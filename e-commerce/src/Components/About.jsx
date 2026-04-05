@@ -1,11 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const About = () => {
+  const navigate = useNavigate();
+
+  const navigateProduct = () => {
+    navigate("/product");
+  };
   return (
     <div className="container mt-5">
-
       <div className="row align-items-center">
-
         {/* Image Section */}
         <div className="col-md-6 mb-4">
           <img
@@ -17,7 +21,6 @@ const About = () => {
 
         {/* Text Section */}
         <div className="col-md-6">
-
           <h1 className="fw-bold mb-3">About Our Store</h1>
 
           <p className="text-muted">
@@ -32,14 +35,9 @@ const About = () => {
             delivery, we ensure the best shopping experience.
           </p>
 
-          <button className="btn btn-dark mt-3">
-            Explore Products
-          </button>
-
+          <button className="btn btn-dark mt-3" onClick={navigateProduct}>Explore Products</button>
         </div>
-
       </div>
-
     </div>
   );
 };

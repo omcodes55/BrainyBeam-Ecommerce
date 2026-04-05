@@ -17,6 +17,10 @@ router.post('/add', verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
 
+        if (!product.productPrice) {
+            return res.status(400).json({ message: "Invalid product price" });
+        }
+
         let cart = await AddToCart.findOne({ userId });
 
         if (!cart) {
@@ -38,7 +42,8 @@ router.post('/add', verifyToken, async (req, res) => {
                 productDescription: product.productDescription,
                 productImage: product.productImage,
                 productPrice: product.productPrice,
-                productName: product.productName
+                productName: product.productName,
+                quantity: 1
             });
         }
 
@@ -51,7 +56,8 @@ router.post('/add', verifyToken, async (req, res) => {
         await cart.save();
 
         res.status(200).json({
-            message: "✅ Product Added in Cart!"
+            message: "✅ Product Added in Cart!",
+            cart
         });
 
     } catch (err) {
@@ -65,6 +71,7 @@ router.post('/add', verifyToken, async (req, res) => {
 router.get('/list', verifyToken, async (req, res) => {
     try {
         const cart = await AddToCart.findOne({ userId: req.user._id });
+
         res.json(cart || { items: [], totalAmount: 0 });
 
     } catch (err) {
@@ -74,13 +81,17 @@ router.get('/list', verifyToken, async (req, res) => {
 });
 
 
-// ✅ UPDATE QUANTITY
+// ✅ UPDATE QUANTITY (+ / - SAFE)
 router.put('/update', verifyToken, async (req, res) => {
     try {
         const { productId, action } = req.body;
         const userId = req.user._id;
 
         let cart = await AddToCart.findOne({ userId });
+
+        if (!cart) {
+            return res.status(404).json({ message: "Cart not found" });
+        }
 
         const item = cart.items.find(
             item => item.productId.toString() === productId
@@ -90,18 +101,26 @@ router.put('/update', verifyToken, async (req, res) => {
             return res.status(404).json({ message: "Item not found" });
         }
 
+        // ✅ HANDLE ACTION
         if (action === "increase") {
             item.quantity += 1;
-        } else if (action === "decrease") {
-            item.quantity -= 1;
 
-            if (item.quantity <= 0) {
-                cart.items = cart.items.filter(
-                    i => i.productId.toString() !== productId
-                );
+        } else if (action === "decrease") {
+            if (item.quantity > 1) {
+                item.quantity -= 1;
+            } else {
+                return res.status(400).json({
+                    message: "Quantity cannot be less than 1"
+                });
             }
+
+        } else {
+            return res.status(400).json({
+                message: "Invalid action"
+            });
         }
 
+        // ✅ RECALCULATE TOTAL
         cart.totalAmount = cart.items.reduce(
             (acc, item) => acc + item.productPrice * item.quantity,
             0
@@ -109,7 +128,10 @@ router.put('/update', verifyToken, async (req, res) => {
 
         await cart.save();
 
-        res.json({ message: "Cart updated" });
+        res.json({
+            message: "Cart updated",
+            cart
+        });
 
     } catch (err) {
         console.log(err);
@@ -134,6 +156,7 @@ router.delete('/remove/:productId', verifyToken, async (req, res) => {
             item => item.productId.toString() !== productId
         );
 
+        // ✅ RECALCULATE TOTAL
         cart.totalAmount = cart.items.reduce(
             (acc, item) => acc + item.productPrice * item.quantity,
             0
@@ -141,7 +164,10 @@ router.delete('/remove/:productId', verifyToken, async (req, res) => {
 
         await cart.save();
 
-        res.json({ message: "🗑️ Item removed from cart" });
+        res.json({
+            message: "🗑️ Item removed from cart",
+            cart
+        });
 
     } catch (err) {
         console.log(err);
